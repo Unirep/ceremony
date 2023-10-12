@@ -10,7 +10,7 @@ export default ({ wsApp, db, ceremony }) => {
       const auth = await db.findOne('Auth', {
         where: { token },
       })
-      if (!auth) return send('unauthorized', 1)
+      if (!auth) return send({ unauthorized: true })
       const queue = queues.find(({ name }) => name === queueName)
       if (!queue) return send(`invalid queue name: "${queueName}"`, 1)
       // check the queue requirement

@@ -10,7 +10,7 @@ export default ({ wsApp, db, ceremony }) => {
       const auth = await db.findOne('Auth', {
         where: { token },
       })
-      if (!auth) return send('unauthorized', 1)
+      if (!auth) return send({ unauthorized: true })
       const queueEntry = await db.findOne('CeremonyQueue', {
         where: {
           userId: auth.userId,

@@ -159,9 +159,20 @@ ${hashText}
     }
     this.loadState().catch(console.log)
     if (!this.authenticated) await this.auth()
-    const { data } = await this.client.send('user.info', {
+
+    let data
+    const ret = await this.client.send('user.info', {
       token: this.authToken,
     })
+    data = ret.data
+
+    if (data.unauthorized) {
+      await this.auth()
+      const _ret = await this.client.send('user.info', {
+        token: this.authToken,
+      })
+      data = _ret.data
+    }
 
     this.inQueue = data.inQueue
     if (data.inQueue) {
@@ -273,6 +284,11 @@ ${hashText}
       token: this.authToken,
       queueName,
     })
+    if (_data.unauthorized) {
+      console.error('Unauthorized.')
+      return
+    }
+
     this.inQueue = true
     this.queuePosition = _data.queuePosition
     // start the keepalive
@@ -411,6 +427,10 @@ ${hashText}
         const { data } = await this.client.send('ceremony.keepalive', {
           token: this.authToken,
         })
+        if (data.unauthorized) {
+          throw new Error('Unauthorized')
+        }
+
         this.queuePosition = data.queuePosition
         this.timeoutAt = data.timeoutAt
       } catch (err) {
