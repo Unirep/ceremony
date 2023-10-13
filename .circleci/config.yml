@@ -82,10 +82,12 @@ jobs:
       #       rm /home/circleci/.docker/config.json
       - run:
           name: Build frontend
-          command: yarn frontend build --mode production
+          command: |
+            cd packages/frontend
+            echo 'export const HTTP_SERVER = "https://http.ceremony.unirep.io"' > src/config.js
+            yarn build --mode production
       - run:
           name: Publish frontend
           command: |
             cd packages/frontend
-            echo 'export const HTTP_SERVER = "https://http.ceremony.unirep.io"' > src/config.js
             npx wrangler@2.1 publish
