@@ -67,7 +67,6 @@ module.exports = (env, argv) => ({
     }),
     new webpack.DefinePlugin({
       NODE_ENV: `'${argv.mode}'` ?? `'development'`,
-      'process.env.HTTP_SERVER': '"https://http.ceremony.unirep.io"',
     }),
   ],
   optimization: {
