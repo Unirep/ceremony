@@ -10,7 +10,6 @@ workflows:
             branches:
               only:
                 - main
-                - autodeploy
 
 # Just for reusing below
 step_defs:
