@@ -4,12 +4,13 @@ workflows:
     jobs:
       - lint
       - test-backend
-      # - deploy:
-      #     context: cloudflare
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
+      - deploy:
+          context: cloudflare
+          filters:
+            branches:
+              only:
+                - main
+                - autodeploy
 
 # Just for reusing below
 step_defs:
@@ -70,9 +71,9 @@ jobs:
       - run:
           name: Install
           command: yarn
-      - run:
-          name: Build backend image
-          command: docker build . -t jchancehud/trusted-setup:latest
+      # - run:
+      #     name: Build backend image
+      #     command: docker build . -t jchancehud/trusted-setup:latest
       # - run:
       #     name: Push relay image
       #     command: |
@@ -86,4 +87,5 @@ jobs:
           name: Publish frontend
           command: |
             cd packages/frontend
+            echo 'export const HTTP_SERVER = "https://http.ceremony.unirep.io"' > src/config.js
             npx wrangler@2.1 publish

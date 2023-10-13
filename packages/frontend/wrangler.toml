@@ -1,4 +1,4 @@
-name = "trusted-setup0"
+name = "trusted-setup-unirep-v2"
 compatibility_date = "2022-10-18"
 main = "dist/index.js"
 
