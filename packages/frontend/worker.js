@@ -17,7 +17,7 @@ async function handleEvent(event) {
     const url = new URL(event.request.url)
     const isSSR = !/.+\.[a-zA-Z]+$/.test(url.pathname)
 
-    if (!isSSR) {
+    if (!isSSR || true) {
       // return a static asset
       return getAssetFromKV(event, { mapRequestToAsset: serveSinglePageApp })
     }
