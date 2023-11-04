@@ -12,8 +12,24 @@ const App = () => (
       open={true}
       onClose={() => {}}
       title="Announcement"
-      content="The server is currently paused, we will announce right after it is redeployed."
-      button={<></>}
+      content="The server is currently paused, we will announce right after it restarts."
+      button={
+        <button
+          style={{
+            borderRadius: '24px',
+            padding: '12px 24px',
+            fontWeight: '600',
+          }}
+        >
+          <a
+            target="_blank"
+            href="https://discord.com/invite/VzMMDJmYc5"
+            style={{ color: 'black' }}
+          >
+            Discord
+          </a>
+        </button>
+      }
     />
     <ScrollToTop />
     <Routes />
