@@ -40,7 +40,7 @@ try {
   if (!sent) {
     console.log('failed to send ipc message')
   }
-  await new Promise(r => setTimeout(r, 2000))
+  await new Promise((r) => setTimeout(r, 2000))
   process.exit(0)
 } catch (err) {
   console.log(err)
