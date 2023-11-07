@@ -29,7 +29,7 @@ export const contribpath = (name) => dbpath(normalize(name))
 
 export const KEEPALIVE_INTERVAL = +(process.env.KEEPALIVE_INTERVAL ?? 25 * 1000)
 export const CONTRIBUTION_TIMEOUT = +(
-  process.env.CONTRIBUTION_TIMEOUT ?? 320 * 1000
+  process.env.CONTRIBUTION_TIMEOUT ?? 160 * 1000
 )
 export const PRUNE_INTERVAL = +(process.env.PRUNE_INTERVAL ?? 12 * 1000)
 
