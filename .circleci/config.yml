@@ -4,12 +4,12 @@ workflows:
     jobs:
       - lint
       - test-backend
-      # - deploy:
-      #     context: cloudflare
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
+      - deploy:
+          context: cloudflare
+          filters:
+            branches:
+              only:
+                - main
 
 # Just for reusing below
 step_defs:
@@ -70,9 +70,9 @@ jobs:
       - run:
           name: Install
           command: yarn
-      - run:
-          name: Build backend image
-          command: docker build . -t jchancehud/trusted-setup:latest
+      # - run:
+      #     name: Build backend image
+      #     command: docker build . -t jchancehud/trusted-setup:latest
       # - run:
       #     name: Push relay image
       #     command: |
@@ -81,7 +81,10 @@ jobs:
       #       rm /home/circleci/.docker/config.json
       - run:
           name: Build frontend
-          command: yarn frontend build --mode production
+          command: |
+            cd packages/frontend
+            echo 'export const HTTP_SERVER = "https://http.ceremony.unirep.io"' > src/config.js
+            yarn build --mode production
       - run:
           name: Publish frontend
           command: |

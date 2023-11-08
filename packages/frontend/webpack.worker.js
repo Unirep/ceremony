@@ -42,7 +42,7 @@ module.exports = (env, argv) => ({
         },
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
+        test: /\.(mp4|png|svg|jpg|gif)$/,
         loader: 'file-loader',
         options: {
           // publicPath: 'build',
@@ -51,7 +51,7 @@ module.exports = (env, argv) => ({
       },
       {
         test: /\.css$/,
-        exclude: /node_modules/,
+        //exclude: /node_modules/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
