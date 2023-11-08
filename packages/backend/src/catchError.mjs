@@ -4,7 +4,11 @@ export const catchError = (fn) => async (req, res, next) => {
   } catch (err) {
     console.log('Uncaught error in http handler')
     console.log(err)
-    res.status(500).end({ error: 'uncaught error' })
+    try {
+      // try to send a 500
+      // the response has already started just silently fail
+      res.status(500).end({ error: 'uncaught error' })
+    } catch (_) {}
   }
 }
 
