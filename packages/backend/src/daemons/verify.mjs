@@ -28,20 +28,23 @@ try {
 
   if (!mpcParams) {
     console.log('no mpcParams')
-    process.send(mpcParams)
-    process.exit(0)
+    process.exit(1)
   }
-  const sent = process.send({
-    contributions: mpcParams.contributions.map((c) => ({
-      contributionHash: formatHash(c.contributionHash),
-      name: c.name,
-    })),
-  })
-  if (!sent) {
-    console.log('failed to send ipc message')
-  }
-  await new Promise((r) => setTimeout(r, 2000))
-  process.exit(0)
+  process.send(
+    {
+      contributions: mpcParams.contributions.map((c) => ({
+        contributionHash: formatHash(c.contributionHash),
+        name: c.name,
+      })),
+    },
+    (err) => {
+      if (err) {
+        console.log(err)
+        console.log('error sending ipc message')
+      }
+      process.exit(0)
+    }
+  )
 } catch (err) {
   console.log(err)
   process.exit(1)
