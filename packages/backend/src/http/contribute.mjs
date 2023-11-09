@@ -85,6 +85,7 @@ export default ({ app, wsApp, db, ceremony }) => {
         if (!mpcParams) {
           // remove from queue
           await ceremony.removeFromQueue(auth.userId)
+          await fs.rm(req.file.path)
           return res.status(422).json({ error: 'invalid contribution' })
         }
         // take the latest contribution hash
@@ -94,6 +95,7 @@ export default ({ app, wsApp, db, ceremony }) => {
         hash = contributionHash
         if (!hash) {
           await ceremony.removeFromQueue(auth.userId)
+          await fs.rm(req.file.path)
           return res
             .status(422)
             .json({ error: 'failed to extract contribution hash' })
@@ -115,12 +117,14 @@ export default ({ app, wsApp, db, ceremony }) => {
         })
         if (mpcContributionsLength - 1 !== contributionCount) {
           await ceremony.removeFromQueue(auth.userId)
+          await fs.rm(req.file.path)
           return res
             .status(422)
             .json({ error: 'invalid final contribution count' })
         }
         if (contributionCount > 0 && lastHash !== latestContribution.hash) {
           await ceremony.removeFromQueue(auth.userId)
+          await fs.rm(req.file.path)
           return res
             .status(422)
             .json({ error: 'invalid previous contribution' })
@@ -129,6 +133,7 @@ export default ({ app, wsApp, db, ceremony }) => {
         console.log(`Error verifying contribution`)
         console.log(_err)
         await ceremony.removeFromQueue(auth.userId)
+        await fs.rm(req.file.path)
         return res.status(422).json({ error: 'error verifying contribution' })
       }
 
