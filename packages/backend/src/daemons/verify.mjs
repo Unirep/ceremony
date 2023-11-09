@@ -28,17 +28,32 @@ try {
 
   if (!mpcParams) {
     console.log('no mpcParams')
-    process.send(mpcParams)
-    process.exit(0)
+    process.exit(1)
   }
-  const sent = process.send({
-    contributions: mpcParams.contributions.map((c) => ({
-      contributionHash: formatHash(c.contributionHash),
-      name: c.name,
-    })),
-  })
-  if (!sent) {
-    console.log('failed to send ipc message')
+  const contributions = mpcParams.contributions.map((c) => ({
+    contributionHash: formatHash(c.contributionHash),
+    name: c.name,
+  }))
+  // chunk the contributions in sets of 500
+  const chunkSize = 2
+  const chunkedContributions = contributions.reduce((acc, val, index) => {
+    const chunkIndex = Math.floor(index / chunkSize)
+    if (!acc[chunkIndex]) {
+      acc[chunkIndex] = []
+    }
+    acc[chunkIndex].push(val)
+    return acc
+  }, [])
+
+  for (const [index, chunk] of Object.entries(chunkedContributions)) {
+    const sent = process.send({
+      chunkCount: chunkedContributions.length,
+      chunkIndex: index,
+      contributions: chunk,
+    })
+    if (!sent) {
+      console.log(`Failed to send IPC chunk ${index}`)
+    }
   }
   await new Promise((r) => setTimeout(r, 2000))
   process.exit(0)

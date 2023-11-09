@@ -22,13 +22,26 @@ class ThreadManager {
       () =>
         new Promise((rs, rj) => {
           const p = child_process.fork(path.join(__dirname, 'verify.mjs'), args)
-          let receivedMsg = false
+          let messageComplete = false
+          let receivedChunkCount = 0
+          let totalChunkCount = 0
+          const chunks = []
           p.on('message', (msg) => {
-            receivedMsg = true
-            rs(msg)
+            totalChunkCount = msg.chunkCount
+            receivedChunkCount++
+            chunks[msg.chunkIndex] = msg
+            if (receivedChunkCount === totalChunkCount) {
+              messageComplete = true
+              rs({
+                contributions: chunks.reduce((acc, val) => {
+                  acc.push(...val.contributions)
+                  return acc
+                }, []),
+              })
+            }
           })
           p.on('exit', (code) => {
-            if (!receivedMsg && code === 0) {
+            if (!messageComplete && code === 0) {
               console.log('exited 0 without receiving msg!')
               rj(new Error('verification process exited without msg'))
             }
