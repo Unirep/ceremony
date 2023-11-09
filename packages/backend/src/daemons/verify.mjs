@@ -45,17 +45,29 @@ try {
     return acc
   }, [])
 
+  const sendPromises = []
   for (const [index, chunk] of Object.entries(chunkedContributions)) {
-    const sent = process.send({
-      chunkCount: chunkedContributions.length,
-      chunkIndex: index,
-      contributions: chunk,
+    const p = new Promise((rs, rj) => {
+      process.send(
+        {
+          chunkCount: chunkedContributions.length,
+          chunkIndex: index,
+          contributions: chunk,
+        },
+        (err) => {
+          if (err) {
+            console.log(`Failed to send IPC chunk ${index}`)
+            console.log(err)
+            rj(err)
+          } else {
+            rs()
+          }
+        }
+      )
     })
-    if (!sent) {
-      console.log(`Failed to send IPC chunk ${index}`)
-    }
+    sendPromises.push(p)
   }
-  await new Promise((r) => setTimeout(r, 2000))
+  await Promise.all(sendPromises)
   process.exit(0)
 } catch (err) {
   console.log(err)
