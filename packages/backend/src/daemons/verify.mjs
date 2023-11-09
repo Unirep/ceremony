@@ -34,8 +34,7 @@ try {
     contributionHash: formatHash(c.contributionHash),
     name: c.name,
   }))
-  // chunk the contributions in sets of 500
-  const chunkSize = 2
+  const chunkSize = 250
   const chunkedContributions = contributions.reduce((acc, val, index) => {
     const chunkIndex = Math.floor(index / chunkSize)
     if (!acc[chunkIndex]) {
