@@ -1,6 +1,6 @@
 import * as snarkjs from 'snarkjs'
 
-const TIMEOUT = 40000
+const TIMEOUT = 70000
 const args = process.argv.slice(2)
 
 function formatHash(b) {
