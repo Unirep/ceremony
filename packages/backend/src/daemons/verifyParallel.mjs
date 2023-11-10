@@ -26,14 +26,17 @@ class ThreadManager {
           let receivedMsg = false
           p.on('message', async (msg) => {
             try {
+              receivedMsg = true
               const { filepath } = msg
               const data = await fs.readFile(filepath)
               rs(JSON.parse(data.toString()))
-              receivedMsg = true
-              await fs.rm(filepath)
+              fs.rm(filepath).catch((err) =>
+                console.log(`Error deleting json verification file`, err)
+              )
             } catch (err) {
               console.log('unexpected error in verifier message handler')
               console.log(err)
+              rj(err)
             }
           })
           p.on('exit', (code) => {
