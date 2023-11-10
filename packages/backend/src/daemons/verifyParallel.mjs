@@ -2,6 +2,7 @@ import os from 'os'
 import child_process from 'child_process'
 import url from 'url'
 import path from 'path'
+import fs from 'fs/promises'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
@@ -23,9 +24,20 @@ class ThreadManager {
         new Promise((rs, rj) => {
           const p = child_process.fork(path.join(__dirname, 'verify.mjs'), args)
           let receivedMsg = false
-          p.on('message', (msg) => {
-            receivedMsg = true
-            rs(msg)
+          p.on('message', async (msg) => {
+            try {
+              receivedMsg = true
+              const { filepath } = msg
+              const data = await fs.readFile(filepath)
+              rs(JSON.parse(data.toString()))
+              fs.rm(filepath).catch((err) =>
+                console.log(`Error deleting json verification file`, err)
+              )
+            } catch (err) {
+              console.log('unexpected error in verifier message handler')
+              console.log(err)
+              rj(err)
+            }
           })
           p.on('exit', (code) => {
             if (!receivedMsg && code === 0) {
