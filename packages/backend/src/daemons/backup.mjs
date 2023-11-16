@@ -61,7 +61,7 @@ export default class Backup {
       const toUpload = await this.db.findMany('Contribution', {
         where: {
           circuitName: circuit.name,
-          _id: { ne: latest._id },
+          createdAt: { lt: latest.createdAt },
           uploadedAt: null,
         },
       })
