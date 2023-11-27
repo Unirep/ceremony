@@ -6,7 +6,7 @@ export default observer(() => {
   const [remainTime, setRemainTime] = React.useState([0, 0, 0, 0])
 
   const updateTimer = async () => {
-    const dday = new Date(Date.UTC(2023, 11, 5, 0, 0, 0))
+    const dday = new Date(Date.UTC(2023, 11, 12, 0, 0, 0))
     const now = Date.now()
     let dSeconds = Math.floor((dday - now) / 1000)
     const dDays = Math.floor(dSeconds / (24 * 60 * 60))
