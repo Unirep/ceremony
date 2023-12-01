@@ -1,0 +1,17 @@
+.countdown-container {
+  display: flex;
+  gap: 4px;
+  color: #fee4cb;
+  font-size: 20px;
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  margin: 3rem 10rem;
+}
+
+.countdown-time {
+  background: #fee4cb;
+  color: black;
+  border-radius: 8px;
+  padding: 16px;
+}

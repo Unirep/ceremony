@@ -8,6 +8,7 @@ import ContributionCard from '../components/ContributionCard'
 import FaqDropdown from '../components/FaqDropdown'
 import Footer from '../components/Footer'
 import InfoContainer from '../components/InfoContainer'
+import Countdown from '../components/Countdown'
 import state from '../contexts/state'
 import { HTTP_SERVER } from '../config'
 
@@ -43,7 +44,10 @@ export default observer(() => {
             cryptography and purpose. Each contribution is a star ignited,
             knitting together the constellation that unveils our journey.
           </div>
-          <div className="hero-text">Do you hear the cosmic call?</div>
+          <div className="hero-text">
+            Do you hear the cosmic call? The ceremony will end in:
+          </div>
+          <Countdown />
           <div className="flex-center">
             <Link to="/contribute">
               <div className="hero-button">Open Chapter (GUI)</div>
