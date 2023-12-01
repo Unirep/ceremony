@@ -467,11 +467,7 @@ export default observer(() => {
                             fontWeight: '600',
                           }}
                           onClick={async () => {
-                            try {
-                              await ceremony.join(name, 'open')
-                            } catch (e) {
-                              setError(e)
-                            }
+                            await ceremony.join(name, 'open')
                           }}
                         >
                           start contributing

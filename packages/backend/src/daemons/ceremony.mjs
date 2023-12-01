@@ -4,6 +4,7 @@ import {
   CONTRIBUTION_TIMEOUT,
   PRUNE_INTERVAL,
   queues,
+  ENDS_AT,
 } from '../config.mjs'
 
 export default class Ceremony {
