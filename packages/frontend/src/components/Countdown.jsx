@@ -1,12 +1,13 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
+import { ENDS_AT } from '../config.js'
 import './countdown.css'
 
 export default observer(() => {
   const [remainTime, setRemainTime] = React.useState([0, 0, 0, 0])
+  const dday = new Date(ENDS_AT)
 
   const updateTimer = async () => {
-    const dday = new Date(Date.UTC(2023, 11, 12, 0, 0, 0))
     const now = Date.now()
     let dSeconds = Math.floor((dday - now) / 1000)
     const dDays = Math.floor(dSeconds / (24 * 60 * 60))
