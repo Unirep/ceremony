@@ -6,7 +6,7 @@ import './menu.css'
 import state from '../contexts/state'
 
 export default observer(({ closeMenu }) => {
-  const { ceremony } = useContext(state)
+  const { ceremony, ui } = useContext(state)
   return (
     <div className="menu-container">
       <div className="header">
@@ -33,9 +33,11 @@ export default observer(({ closeMenu }) => {
       <div className="menu-content">
         <Link to="/stats">Stats</Link>
 
-        <div className="menu-contribute">
-          <Link to="/contribute">Contribute</Link>
-        </div>
+        {ui.endsIn > 0 && (
+          <div className="menu-contribute">
+            <Link to="/contribute">Contribute</Link>
+          </div>
+        )}
 
         <ServerState shrink={true} />
 
