@@ -33,6 +33,8 @@ export const CONTRIBUTION_TIMEOUT = +(
 )
 export const PRUNE_INTERVAL = +(process.env.PRUNE_INTERVAL ?? 12 * 1000)
 
+export const ENDS_AT = +(process.env.ENDS_AT ?? 10 ** 13)
+
 export const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
 export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET
 export const GITHUB_REDIRECT_URI =

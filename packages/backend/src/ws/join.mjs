@@ -1,4 +1,4 @@
-import { KEEPALIVE_INTERVAL, queues } from '../config.mjs'
+import { KEEPALIVE_INTERVAL, queues, ENDS_AT } from '../config.mjs'
 import { catchErrorWs } from '../catchError.mjs'
 
 export default ({ wsApp, db, ceremony }) => {
@@ -11,6 +11,9 @@ export default ({ wsApp, db, ceremony }) => {
         where: { token },
       })
       if (!auth) return send({ unauthorized: true })
+      if (+new Date() > ENDS_AT) {
+        return send('Ceremony has ended', 1)
+      }
       const queue = queues.find(({ name }) => name === queueName)
       if (!queue) return send(`invalid queue name: "${queueName}"`, 1)
       // check the queue requirement

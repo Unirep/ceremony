@@ -6,6 +6,7 @@ import {
   CEREMONY_IMAGE_PATH,
   ATTESTATION_URL,
   CEREMONY_DESCRIPTION,
+  ENDS_AT,
 } from '../config.mjs'
 
 export default ({ app }) => {
@@ -18,6 +19,7 @@ export default ({ app }) => {
       ceremonyImagePath: CEREMONY_IMAGE_PATH,
       attestationUrl: ATTESTATION_URL,
       ceremonyDescription: CEREMONY_DESCRIPTION,
+      ENDS_AT,
     })
   })
 }
