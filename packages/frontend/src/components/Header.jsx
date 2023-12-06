@@ -43,9 +43,11 @@ export default observer(({ logoOnly, disableLink }) => {
 
           <div className="header-flex" style={{ justifyContent: 'flex-end' }}>
             <Link to="/stats">Stats</Link>
-            <div className="header-button">
-              <Link to="/contribute">Contribute</Link>
-            </div>
+            {ui.endsIn > 0 && (
+              <div className="header-button">
+                <Link to="/contribute">Contribute</Link>
+              </div>
+            )}
           </div>
         </div>
       )}{' '}

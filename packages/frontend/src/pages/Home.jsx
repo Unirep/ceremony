@@ -48,16 +48,29 @@ export default observer(() => {
             Do you hear the cosmic call? The ceremony will end in:
           </div>
           <Countdown />
-          <div className="flex-center">
-            <Link to="/contribute">
-              <div className="hero-button">Open Chapter (GUI)</div>
-            </Link>
-          </div>
-          <div className="flex-center">
-            <Link to="/contribute#cli">
-              <div className="hero-button-inverse">Use CLI</div>
-            </Link>
-          </div>
+          {ui.endsIn > 0 && (
+            <div className="flex-center">
+              <Link to="/contribute">
+                <div className="hero-button">Open Chapter (GUI)</div>
+              </Link>
+            </div>
+          )}
+          {ui.endsIn > 0 && (
+            <div className="flex-center">
+              <Link to="/contribute#cli">
+                <div className="hero-button-inverse">Use CLI</div>
+              </Link>
+            </div>
+          )}
+          {ui.endsIn <= 0 && (
+            <div className="flex-center">
+              <Link to="/stats">
+                <div className="hero-button-inverse">
+                  View all contributions
+                </div>
+              </Link>
+            </div>
+          )}
         </div>
 
         <InfoContainer
