@@ -15,6 +15,7 @@ export default observer(() => {
   const [activeCircuit, setActiveCircuit] = useState(ceremony.circuitNames[0])
   const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
+  const [transcriptLink, setTranscriptLink] = useState('_')
   const indexOfLastRecord = currentPage * recordsPerPage
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage
   const data = ceremony.transcript.filter(
@@ -37,6 +38,20 @@ export default observer(() => {
     }
   }
 
+  const decideTranscriptLink = async () => {
+    const link = new URL('/transcript', HTTP_SERVER).toString()
+    try {
+      await fetch(link)
+      setTranscriptLink(link)
+    } catch (e) {
+      setTranscriptLink('/transcript.json')
+    }
+  }
+
+  React.useEffect(() => {
+    decideTranscriptLink()
+  })
+
   return (
     <div className="stats-content">
       <Header />
@@ -45,10 +60,7 @@ export default observer(() => {
         <div>
           <div className="stats-heading">CEREMONY STATS</div>
           <div className="stats-link">
-            <a
-              href={new URL('/transcript', HTTP_SERVER).toString()}
-              target="_blank"
-            >
+            <a href={transcriptLink} target="_blank">
               Full transcript
             </a>
           </div>

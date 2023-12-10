@@ -160,6 +160,8 @@ ${hashText}
     this.loadState().catch(console.log)
     if (!this.authenticated) await this.auth()
 
+    if (!this.client) return console.error('No client loaded.')
+
     let data
     const ret = await this.client.send('user.info', {
       token: this.authToken,
@@ -215,12 +217,20 @@ ${hashText}
 
   async bootstrap() {
     const url = new URL('/bootstrap', HTTP_SERVER)
-    const r = await fetch(url.toString())
+    let r
+    try {
+      r = await fetch(url.toString())
+    } catch (e) {
+      console.log('error bootstrapping')
+      return
+    }
+
     if (!r.ok) {
       console.log('error bootstrapping')
       console.log(await r.json())
       return
     }
+
     const data = await r.json()
     this.bootstrapData = data
     const authOptions = data.authOptions.filter(
@@ -234,7 +244,18 @@ ${hashText}
     if (this.transcript.length) {
       url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
     }
-    const data = await fetch(url.toString()).then((r) => r.json())
+
+    let data
+    try {
+      data = await fetch(url.toString()).then((r) => r.json())
+    } catch (e) {
+      if (this.transcript.length > 0) return // since the transcript.json is a static file, if the transcript is loaded before, it shouldn't have new data to be loaded.
+      console.log(
+        'The server is down, try to load transcript from static files.'
+      )
+      data = require('../../public/transcript.json')
+    }
+
     const transcriptIds = this.transcript.reduce(
       (acc, obj) => ({
         ...acc,
@@ -246,16 +267,23 @@ ${hashText}
       data.filter(({ _id }) => !transcriptIds[_id]),
       this.transcript,
     ].flat()
+
+    console.log(this.transcript[0].createdAt)
   }
 
   async loadStateHttp() {
-    const data = await fetch(new URL('/ceremony', HTTP_SERVER).toString()).then(
-      (r) => r.json()
-    )
-    this.ingestState(data)
+    try {
+      const data = await fetch(
+        new URL('/ceremony', HTTP_SERVER).toString()
+      ).then((r) => r.json())
+      this.ingestState(data)
+    } catch (e) {
+      console.error('The server is down.')
+    }
   }
 
   async loadState() {
+    if (!this.client) return console.error('no client loaded')
     const { data } = await this.client.send('ceremony.state')
     this.ingestState(data)
   }
@@ -477,7 +505,7 @@ ${hashText}
 
   async connect() {
     if (this.connected) return console.log('Already connected')
-    if (!this.bootstrapData?.WS_SERVER) throw new Error('No ws url loaded')
+    if (!this.bootstrapData?.WS_SERVER) return console.log('No ws url loaded')
     try {
       const _client = new EspecialClient(this.bootstrapData?.WS_SERVER)
       makeObservable(_client, {
