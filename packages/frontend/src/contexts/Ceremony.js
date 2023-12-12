@@ -254,6 +254,16 @@ ${hashText}
         'The server is down, try to load transcript from static files.'
       )
       data = require('../../public/transcript.json')
+
+      const circuitNames = []
+      let circuitStats = []
+      data.forEach((d) => {
+        if (!circuitNames.includes(d.circuitName)) {
+          circuitStats.push({ name: d.circuitName, contributionCount: d.index })
+          circuitNames.push(d.circuitName)
+        }
+      })
+      this.ingestState({ circuitStats })
     }
 
     const transcriptIds = this.transcript.reduce(
