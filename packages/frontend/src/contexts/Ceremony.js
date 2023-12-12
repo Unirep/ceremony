@@ -267,8 +267,6 @@ ${hashText}
       data.filter(({ _id }) => !transcriptIds[_id]),
       this.transcript,
     ].flat()
-
-    console.log(this.transcript[0].createdAt)
   }
 
   async loadStateHttp() {

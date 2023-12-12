@@ -50,7 +50,7 @@ export default observer(() => {
 
   React.useEffect(() => {
     decideTranscriptLink()
-  })
+  }, [])
 
   return (
     <div className="stats-content">
