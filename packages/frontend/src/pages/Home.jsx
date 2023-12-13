@@ -14,9 +14,7 @@ import { HTTP_SERVER } from '../config'
 
 export default observer(() => {
   const { ui, ceremony } = React.useContext(state)
-  if (!HTTP_SERVER) {
-    return <Welcome />
-  }
+
   return (
     <>
       {ui.isMobile ? (

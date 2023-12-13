@@ -15,7 +15,7 @@ export default observer(() => {
   const [activeCircuit, setActiveCircuit] = useState(ceremony.circuitNames[0])
   const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
-  const [loadFromLocal, setLoadFromLocal] = useState(false)
+  const [loadFromLocal, setLoadFromLocal] = useState(true)
   const indexOfLastRecord = currentPage * recordsPerPage
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage
   const data = ceremony.transcript.filter(
@@ -58,10 +58,13 @@ export default observer(() => {
   }
 
   const decideWhetherLoadFromLocal = async () => {
-    try {
-      await fetch(new URL('/transcript', HTTP_SERVER).toString())
-    } catch (e) {
-      setLoadFromLocal(true)
+    if (HTTP_SERVER) {
+      try {
+        await fetch(new URL('/transcript', HTTP_SERVER).toString())
+        setLoadFromLocal(false)
+      } catch (e) {
+        setLoadFromLocal(true)
+      }
     }
   }
 

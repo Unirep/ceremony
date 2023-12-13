@@ -132,6 +132,9 @@ ${hashText}
     }
     const url = new URL(window.location)
     if (!HTTP_SERVER) {
+      if (!this.transcript.length) {
+        this.loadTranscriptFromLocal()
+      }
       return
     }
     if (url.searchParams.get('github_access_token')) {
@@ -239,31 +242,40 @@ ${hashText}
     this.bootstrapData.authOptions = authOptions
   }
 
-  async loadTranscript() {
-    const url = new URL('/transcript', HTTP_SERVER)
-    if (this.transcript.length) {
-      url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
-    }
+  loadTranscriptFromLocal() {
+    if (this.transcript.length > 0) return // since the transcript.json is a static file, if the transcript is loaded before, it shouldn't have new data to be loaded.
 
     let data
-    try {
-      data = await fetch(url.toString()).then((r) => r.json())
-    } catch (e) {
-      if (this.transcript.length > 0) return // since the transcript.json is a static file, if the transcript is loaded before, it shouldn't have new data to be loaded.
-      console.log(
-        'The server is down, try to load transcript from static files.'
-      )
-      data = require('../../public/transcript.json')
+    data = require('../../public/transcript.json')
 
-      const circuitNames = []
-      let circuitStats = []
-      data.forEach((d) => {
-        if (!circuitNames.includes(d.circuitName)) {
-          circuitStats.push({ name: d.circuitName, contributionCount: d.index })
-          circuitNames.push(d.circuitName)
-        }
-      })
-      this.ingestState({ circuitStats })
+    const circuitNames = []
+    let circuitStats = []
+    data.forEach((d) => {
+      if (!circuitNames.includes(d.circuitName)) {
+        circuitStats.push({ name: d.circuitName, contributionCount: d.index })
+        circuitNames.push(d.circuitName)
+      }
+    })
+    this.ingestState({ circuitStats })
+    this.transcript = data
+  }
+
+  async loadTranscript() {
+    let data
+
+    if (HTTP_SERVER) {
+      const url = new URL('/transcript', HTTP_SERVER)
+      if (this.transcript.length) {
+        url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
+      }
+
+      try {
+        data = await fetch(url.toString()).then((r) => r.json())
+      } catch (e) {
+        this.loadTranscriptFromLocal()
+      }
+    } else {
+      this.loadTranscriptFromLocal()
     }
 
     const transcriptIds = this.transcript.reduce(
