@@ -3,6 +3,8 @@ const Dotenv = require('dotenv-webpack')
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
+
 const webpack = require('webpack')
 
 module.exports = (env, argv) => ({
@@ -133,6 +135,18 @@ module.exports = (env, argv) => ({
     new webpack.ContextReplacementPlugin(/\/maci\-crypto\//, (data) => {
       delete data.dependencies[0].critical
       return data
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'public/zkeys'),
+          to: path.resolve(__dirname, 'build/zkeys'),
+        },
+        {
+          from: path.resolve(__dirname, 'public/transcript.json'),
+          to: path.resolve(__dirname, 'build/transcript.json'),
+        },
+      ],
     }),
   ],
   optimization: {

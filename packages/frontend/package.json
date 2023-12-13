@@ -13,6 +13,7 @@
   "dependencies": {
     "@cloudflare/kv-asset-handler": "^0.2.0",
     "as-bind": "^0.8.2",
+    "copy-webpack-plugin": "^11.0.0",
     "css-minimizer-webpack-plugin": "^5.0.0",
     "dayjs": "^1.11.8",
     "dotenv-webpack": "^8.0.1",
