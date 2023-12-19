@@ -4,7 +4,6 @@ import Header from '../components/Header'
 import ContributionCard from '../components/ContributionCard'
 import Pagination from '../components/Pagination'
 import Footer from '../components/Footer'
-import { HTTP_SERVER } from '../config'
 import './stats.css'
 
 import state from '../contexts/state'
@@ -48,7 +47,19 @@ export default observer(() => {
 
   const decideZkeyLink = (circuitName) => {
     if (loadFromLocal) {
-      return `/zkeys/${circuitName.toLowerCase().replaceAll(' ', '_')}.zkey`
+      if (circuitName.indexOf('Sign Up') >= 0) {
+        return `https://keys.unirep.io/2.0.0-no-beacon/signup.zkey`
+      } else if (circuitName.indexOf('Epoch Key Lite') >= 0) {
+        return `https://keys.unirep.io/2.0.0-no-beacon/epochKeyLite.zkey`
+      } else if (circuitName.indexOf('Epoch Key') >= 0) {
+        return `https://keys.unirep.io/2.0.0-no-beacon/epochKey.zkey`
+      } else if (circuitName.indexOf('User State Transition') >= 0) {
+        return `https://keys.unirep.io/2.0.0-no-beacon/userStateTransition.zkey`
+      } else if (circuitName.indexOf('Reputation') >= 0) {
+        return `https://keys.unirep.io/2.0.0-no-beacon/reputation.zkey`
+      } else if (circuitName.indexOf('Scope Nullifier') >= 0) {
+        return `https://keys.unirep.io/2.0.0-no-beacon/scopeNullifier.zkey`
+      }
     } else {
       return new URL(
         `/contribution/${circuitName}/latest`,
@@ -69,7 +80,7 @@ export default observer(() => {
   }
 
   React.useEffect(() => {
-    decideWhetherLoadFromLocal()
+    // decideWhetherLoadFromLocal()
   }, [])
 
   return (

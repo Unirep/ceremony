@@ -83,7 +83,6 @@ jobs:
           name: Build frontend
           command: |
             cd packages/frontend
-            echo 'export const HTTP_SERVER = "https://http.ceremony.unirep.io", ENDS_AT = 1702339200000;' > src/config.js
             yarn build --mode production
       - run:
           name: Publish frontend

@@ -1,6 +1,5 @@
 import { createContext } from 'react'
 import { makeAutoObservable } from 'mobx'
-import { ENDS_AT } from '../config.js'
 
 const MAX_MOBILE_WIDTH = 850
 
@@ -13,7 +12,7 @@ export default class Interface {
   screenHeight = -1
   isMobile = false
   loaded = false
-  endsIn = ENDS_AT - Date.now()
+  endsIn = 0
 
   constructor(state, requestUrl) {
     makeAutoObservable(this)
@@ -40,9 +39,7 @@ export default class Interface {
     window.addEventListener('load', () => {
       this.loaded = true
     })
-    setInterval(() => {
-      this.endsIn = ENDS_AT - Date.now()
-    }, 1000)
+    setInterval(() => {}, 1000)
   }
 
   updateWindowSize() {

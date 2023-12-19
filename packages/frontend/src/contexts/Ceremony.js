@@ -1,7 +1,7 @@
 import EspecialClient from 'especial/client'
 import { makeAutoObservable, makeObservable, observable } from 'mobx'
 import randomf from 'randomf'
-import { HTTP_SERVER } from '../config'
+const transcript = require('../../public/transcript.json')
 
 export default class Queue {
   connection = null
@@ -131,12 +131,12 @@ ${hashText}
       this[key] = (window.CEREMONY_DATA ?? {})[key]
     }
     const url = new URL(window.location)
-    if (!HTTP_SERVER) {
-      if (!this.transcript.length) {
-        this.loadTranscriptFromLocal()
-      }
-      return
+
+    if (!this.transcript.length) {
+      this.loadTranscriptFromLocal()
     }
+    return
+
     if (url.searchParams.get('github_access_token')) {
       localStorage.setItem(
         'github_access_token',
@@ -246,7 +246,7 @@ ${hashText}
     if (this.transcript.length > 0) return // since the transcript.json is a static file, if the transcript is loaded before, it shouldn't have new data to be loaded.
 
     let data
-    data = require('../../public/transcript.json')
+    data = transcript
 
     const circuitNames = []
     let circuitStats = []

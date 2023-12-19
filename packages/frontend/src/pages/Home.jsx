@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import './home.css'
 import Header from '../components/Header'
-import Welcome from './Welcome'
 import ContributionCard from '../components/ContributionCard'
 import FaqDropdown from '../components/FaqDropdown'
 import Footer from '../components/Footer'
 import InfoContainer from '../components/InfoContainer'
 import Countdown from '../components/Countdown'
 import state from '../contexts/state'
-import { HTTP_SERVER } from '../config'
 
 export default observer(() => {
   const { ui, ceremony } = React.useContext(state)

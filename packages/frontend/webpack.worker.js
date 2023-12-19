@@ -73,10 +73,6 @@ module.exports = (env, argv) => ({
     new CopyPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, 'public/zkeys'),
-          to: path.resolve(__dirname, 'build/zkeys'),
-        },
-        {
           from: path.resolve(__dirname, 'public/transcript.json'),
           to: path.resolve(__dirname, 'build/transcript.json'),
         },
