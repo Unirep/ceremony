@@ -132,6 +132,9 @@ ${hashText}
     }
     const url = new URL(window.location)
     if (!HTTP_SERVER) {
+      if (!this.transcript.length) {
+        this.loadTranscriptFromLocal()
+      }
       return
     }
     if (url.searchParams.get('github_access_token')) {
@@ -159,6 +162,8 @@ ${hashText}
     }
     this.loadState().catch(console.log)
     if (!this.authenticated) await this.auth()
+
+    if (!this.client) return console.error('No client loaded.')
 
     let data
     const ret = await this.client.send('user.info', {
@@ -215,12 +220,20 @@ ${hashText}
 
   async bootstrap() {
     const url = new URL('/bootstrap', HTTP_SERVER)
-    const r = await fetch(url.toString())
+    let r
+    try {
+      r = await fetch(url.toString())
+    } catch (e) {
+      console.log('error bootstrapping')
+      return
+    }
+
     if (!r.ok) {
       console.log('error bootstrapping')
       console.log(await r.json())
       return
     }
+
     const data = await r.json()
     this.bootstrapData = data
     const authOptions = data.authOptions.filter(
@@ -229,12 +242,42 @@ ${hashText}
     this.bootstrapData.authOptions = authOptions
   }
 
+  loadTranscriptFromLocal() {
+    if (this.transcript.length > 0) return // since the transcript.json is a static file, if the transcript is loaded before, it shouldn't have new data to be loaded.
+
+    let data
+    data = require('../../public/transcript.json')
+
+    const circuitNames = []
+    let circuitStats = []
+    data.forEach((d) => {
+      if (!circuitNames.includes(d.circuitName)) {
+        circuitStats.push({ name: d.circuitName, contributionCount: d.index })
+        circuitNames.push(d.circuitName)
+      }
+    })
+    this.ingestState({ circuitStats })
+    this.transcript = data
+  }
+
   async loadTranscript() {
-    const url = new URL('/transcript', HTTP_SERVER)
-    if (this.transcript.length) {
-      url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
+    let data
+
+    if (HTTP_SERVER) {
+      const url = new URL('/transcript', HTTP_SERVER)
+      if (this.transcript.length) {
+        url.searchParams.set('afterTimestamp', this.transcript[0].createdAt)
+      }
+
+      try {
+        data = await fetch(url.toString()).then((r) => r.json())
+      } catch (e) {
+        this.loadTranscriptFromLocal()
+      }
+    } else {
+      this.loadTranscriptFromLocal()
     }
-    const data = await fetch(url.toString()).then((r) => r.json())
+
     const transcriptIds = this.transcript.reduce(
       (acc, obj) => ({
         ...acc,
@@ -249,13 +292,18 @@ ${hashText}
   }
 
   async loadStateHttp() {
-    const data = await fetch(new URL('/ceremony', HTTP_SERVER).toString()).then(
-      (r) => r.json()
-    )
-    this.ingestState(data)
+    try {
+      const data = await fetch(
+        new URL('/ceremony', HTTP_SERVER).toString()
+      ).then((r) => r.json())
+      this.ingestState(data)
+    } catch (e) {
+      console.error('The server is down.')
+    }
   }
 
   async loadState() {
+    if (!this.client) return console.error('no client loaded')
     const { data } = await this.client.send('ceremony.state')
     this.ingestState(data)
   }
@@ -477,7 +525,7 @@ ${hashText}
 
   async connect() {
     if (this.connected) return console.log('Already connected')
-    if (!this.bootstrapData?.WS_SERVER) throw new Error('No ws url loaded')
+    if (!this.bootstrapData?.WS_SERVER) return console.log('No ws url loaded')
     try {
       const _client = new EspecialClient(this.bootstrapData?.WS_SERVER)
       makeObservable(_client, {

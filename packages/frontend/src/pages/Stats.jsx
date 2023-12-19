@@ -15,6 +15,7 @@ export default observer(() => {
   const [activeCircuit, setActiveCircuit] = useState(ceremony.circuitNames[0])
   const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
+  const [loadFromLocal, setLoadFromLocal] = useState(true)
   const indexOfLastRecord = currentPage * recordsPerPage
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage
   const data = ceremony.transcript.filter(
@@ -37,6 +38,40 @@ export default observer(() => {
     }
   }
 
+  const decideTranscriptLink = () => {
+    if (loadFromLocal) {
+      return '/transcript.json'
+    } else {
+      return new URL('/transcript', HTTP_SERVER).toString()
+    }
+  }
+
+  const decideZkeyLink = (circuitName) => {
+    if (loadFromLocal) {
+      return `/zkeys/${circuitName.toLowerCase().replaceAll(' ', '_')}.zkey`
+    } else {
+      return new URL(
+        `/contribution/${circuitName}/latest`,
+        HTTP_SERVER
+      ).toString()
+    }
+  }
+
+  const decideWhetherLoadFromLocal = async () => {
+    if (HTTP_SERVER) {
+      try {
+        await fetch(new URL('/transcript', HTTP_SERVER).toString())
+        setLoadFromLocal(false)
+      } catch (e) {
+        setLoadFromLocal(true)
+      }
+    }
+  }
+
+  React.useEffect(() => {
+    decideWhetherLoadFromLocal()
+  }, [])
+
   return (
     <div className="stats-content">
       <Header />
@@ -45,10 +80,7 @@ export default observer(() => {
         <div>
           <div className="stats-heading">CEREMONY STATS</div>
           <div className="stats-link">
-            <a
-              href={new URL('/transcript', HTTP_SERVER).toString()}
-              target="_blank"
-            >
+            <a href={decideTranscriptLink()} target="_blank">
               Full transcript
             </a>
           </div>
@@ -80,12 +112,7 @@ export default observer(() => {
                 <div>{c.name}</div>
                 <div className="stat-count">
                   <div>{c.contributionCount}</div>
-                  <a
-                    href={new URL(
-                      `/contribution/${c.name}/latest`,
-                      HTTP_SERVER
-                    ).toString()}
-                  >
+                  <a href={decideZkeyLink(c.name)}>
                     <img
                       src={require('../../public/arrow_download.svg')}
                       alt="download arrow"
